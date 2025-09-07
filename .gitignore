@@ -2,4 +2,7 @@
 venv/
 
 # Ignore environment/config file
-config.env
+.env
+
+.cache_new
+
