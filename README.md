@@ -20,7 +20,7 @@ There are more features yet to come than there are features there - because I ha
 3) Personalized Queues - Where each user can see his own queue of songs he wants to play next. Every user gets a turn to pick a song. And they can all pre-add/pre-pick songs that they want to be played.
 4) Previously played on the JAM - and Tracking number of Dislikes for each song that was played
 5) Focus Mode - If someone is actually locked in in his work - he wouldn't want to spend time on any site, he can just have his headphones/earphones on and listen to the songs while staying on the site - without having to "pick a song"/ participate in rating another guy's pick
-6) A Desktop Version of the App Using qt(c++ GUI Framework which I have to learn) which could have more features than the website itself.. but I need more ideas on features ..
+6) A CLI based version is what I'm more excited about than the web-based one :) That's why I'm probably going to do this first and then the web based version.
 7) Currently, I'm planning to use Bootstrap and Vanilla CSS or SCSS for styling.. and Flask to manage routing,requests, connection with Spotify,etc..
 
 I will provide a short video of my website actually running(Which doesn't have much right now)
