@@ -1,6 +1,6 @@
 import socket
 import threading
-
+import time,sys
 HEADER = 64
 PORT = 5050
 FORMAT = 'utf-8'
@@ -10,7 +10,8 @@ SERVER = '172.16.140.82'
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 client.connect((SERVER,PORT))
-master_role =  False
+master_role =  threading.Event()
+
 def send(msg):
     message = msg.encode(FORMAT)
     msg_length = len(message)
@@ -30,6 +31,14 @@ def listen():
             split_ = msg.split("|")
             if len(split_)>2:
                 type,message = split_[1], split_[2]
+
+        #  Did this to remove a bug which was sending [SERVER] message
+        #  even after it's disconnected, it turned out to be because of
+        #  the EOF protocol which sends empty bytes which were being received
+        #  by recv, so this breaks loop when im receiving empty bytes which signifies
+        #  end of code.
+        else:
+            break
         
         '''
         MESSAGE TYPES:-
@@ -38,8 +47,7 @@ def listen():
         if msg.startswith('NOTICE|'):
             print(f'[{split_[0]}] {message}')
             if type == 'ROLE':
-                global master_role
-                master_role = True
+                master_role.set()
                 send('CONFIRM|ROLE')
 
         elif msg.startswith('PROMPT|'):
@@ -48,15 +56,22 @@ def listen():
             if type == 'NAME':
                 send(f"RESPONSE|{type}|{name}")
 
-        # send(DISCONNECT_MSG)
         else:
-            print(f'[SERVER]:{msg}')
-thread = threading.Thread(target=listen)
+            print(f'[SERVER]:{msg}')        
+
+
+thread = threading.Thread(target=listen,daemon = True)
 thread.start()
-thread.join()
-# client.close()
 
+try:
+    while True:
+        pass
 
-    # send('Hello World!')
-
-# send(DISCONNECT_MSG)
+except KeyboardInterrupt:
+    print('Thankyou for visiting, Open for Feedback!..')
+    print('Closing..')
+    time.sleep(1)
+    send(DISCONNECT_MSG)
+    thread.join()
+    client.close()
+    sys.exit()
