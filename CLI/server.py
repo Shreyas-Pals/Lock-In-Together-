@@ -84,8 +84,8 @@ class Server:
                 this_user = user        
         
         while connected:
-            # msg_length = conn.recv(HEADER).decode(FORMAT)
-            msg_length = self.recv_exact(conn, HEADER).decode(FORMAT).strip()
+            msg_length = conn.recv(HEADER).decode(FORMAT)
+            # msg_length = self.recv(conn, HEADER).decode(FORMAT).strip()
             if msg_length:
                 msg_length = int(msg_length)
                 msg = conn.recv(msg_length).decode(FORMAT)
