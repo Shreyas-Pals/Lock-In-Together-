@@ -30,35 +30,30 @@ def listen():
             msg = client.recv(msg_length).decode(FORMAT)
             split_ = msg.split("|")
             if len(split_)>2:
-                type,message = split_[1], split_[2]
+                type_,message = split_[1], split_[2]
 
+            if msg.startswith('NOTICE|'):
+                print(f'[{split_[0]}] {message}')
+                if type_ == 'ROLE':
+                    master_role.set()
+                    send('CONFIRM|ROLE')
+
+            elif msg.startswith('PROMPT|'):
+                input_ = input(f'[{split_[0]}]{message} ')
+                send(f"RESPONSE|{type_}|{input_}")
+            
+            else:
+                print(f'[SERVER]:{msg}')      
+
+        
         #  Did this to remove a bug which was sending [SERVER] message
         #  even after it's disconnected, it turned out to be because of
         #  the EOF protocol which sends empty bytes which were being received
         #  by recv, so this breaks loop when im receiving empty bytes which signifies
         #  end of code.
+
         else:
             break
-        
-        '''
-        MESSAGE TYPES:-
-        '''
-
-        if msg.startswith('NOTICE|'):
-            print(f'[{split_[0]}] {message}')
-            if type == 'ROLE':
-                master_role.set()
-                send('CONFIRM|ROLE')
-
-        elif msg.startswith('PROMPT|'):
-            name = input(f'[{split_[0]}]{message} ')
-
-            if type == 'NAME':
-                send(f"RESPONSE|{type}|{name}")
-
-        else:
-            print(f'[SERVER]:{msg}')        
-
 
 thread = threading.Thread(target=listen,daemon = True)
 thread.start()
